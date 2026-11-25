@@ -65,6 +65,8 @@ function(add_benchmark name)
 
     if (MFEM_USE_CUDA)
        set_property(SOURCE ${${NAME}_BENCH_SRCS} PROPERTY LANGUAGE CUDA)
+    elseif (MFEM_HIP_LANGUAGE)
+       set_property(SOURCE ${${NAME}_BENCH_SRCS} PROPERTY LANGUAGE HIP)
     endif(MFEM_USE_CUDA)
 
     add_executable(bench_${name} ${${NAME}_BENCH_SRCS})
