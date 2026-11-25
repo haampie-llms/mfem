@@ -21,6 +21,11 @@ GPU computing
 - Fixed the Umpire device memory types, which allocated on the device 0 when
   the configured device was another one.
 
+- The CMake build supports HIP with a C++ compiler that is not Clang-based, such
+  as GCC. In this case, the sources are compiled with the HIP language of CMake,
+  which requires CMake 3.21 or newer. Set the HIP compiler with
+  CMAKE_HIP_COMPILER and the GPU architectures with CMAKE_HIP_ARCHITECTURES.
+
 Discretization improvements
 ---------------------------
 - Fixed H1 transfer in L2ProjectionGridTransfer on non-conforming meshes in

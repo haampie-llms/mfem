@@ -137,6 +137,13 @@ HIP build:
          -DCMAKE_CXX_COMPILER=amdclang++ -DCMAKE_HIP_COMPILER=amdclang++
    make -j 4
 
+HIP build with a C++ compiler that is not Clang-based, e.g. GCC:
+   (this build requires CMake 3.21 or newer)
+   mkdir <mfem-build-dir> ; cd <mfem-build-dir>
+   cmake <mfem-source-dir> -DMFEM_USE_HIP=YES -DCMAKE_HIP_ARCHITECTURES=gfx942 \
+         -DCMAKE_CXX_COMPILER=g++ -DCMAKE_HIP_COMPILER=amdclang++
+   make -j 4
+
 Example codes (serial/parallel, depending on the build):
    make examples -j 4
 

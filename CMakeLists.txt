@@ -269,7 +269,29 @@ if (MFEM_USE_HIP)
   if (ROCM_PATH)
     list(INSERT CMAKE_PREFIX_PATH 0 ${ROCM_PATH})
   endif()
+  # A C++ compiler that is not Clang-based, e.g. GCC, cannot compile HIP code,
+  # so compile the sources with the HIP language of CMake instead.
+  if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if (CMAKE_VERSION VERSION_LESS 3.21.0)
+      message(FATAL_ERROR "HIP support with a non-Clang C++ compiler requires"
+        " CMake >= 3.21")
+    endif()
+    set(MFEM_HIP_LANGUAGE ON)
+    enable_language(HIP)
+    set(CMAKE_HIP_STANDARD ${CMAKE_CXX_STANDARD} CACHE STRING
+      "HIP standard to use.")
+    set(CMAKE_HIP_STANDARD_REQUIRED ON CACHE BOOL
+      "Force the use of the chosen HIP standard.")
+    set(CMAKE_HIP_EXTENSIONS OFF CACHE BOOL "Enable HIP standard extensions.")
+  else()
+    set(MFEM_HIP_LANGUAGE OFF)
+  endif()
   find_package(HIP REQUIRED)
+  if (MFEM_HIP_LANGUAGE)
+    # hip::device adds HIP compiler flags to C++ sources and links, also in
+    # projects that use MFEM
+    set(HIP_LIBRARIES hip::host)
+  endif()
   find_package(HIPBLAS REQUIRED)
   find_package(HIPSPARSE REQUIRED)
 endif()
@@ -706,6 +728,8 @@ endforeach()
 
 if (MFEM_USE_CUDA)
   set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CUDA)
+elseif (MFEM_HIP_LANGUAGE)
+  set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE HIP)
 endif()
 
 add_subdirectory(config)
